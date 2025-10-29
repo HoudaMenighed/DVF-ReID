@@ -200,6 +200,17 @@ class build_transformer(nn.Module):
         # features shape assumed [B, 1+N, D]
         global_feat = features[:, 0]  # CLS token
 
+        if global_feat.dim() == 1:
+            global_feat = global_feat.unsqueeze(0)  # (C,) -> (1, C)
+        elif global_feat.dim() > 2:
+            global_feat = global_feat.flatten(1)  # (N, C, H, W) -> (N, C)
+        # debug: print shape and type
+        print("DEBUG: global_feat type:", type(global_feat))
+        try:
+            print("DEBUG: global_feat.shape:", global_feat.shape)
+        except Exception as e:
+            print("DEBUG: cannot read shape:", e)
+
         feat_bn = self.bottleneck(global_feat)
 
         if self.training:
@@ -209,6 +220,12 @@ class build_transformer(nn.Module):
                 cls_score = self.classifier(feat_bn, label)
             else:
                 cls_score = self.classifier(feat_bn)
+            # debug: print shape and type
+            print("DEBUG: global_feat type:", type(global_feat))
+            try:
+                print("DEBUG: global_feat.shape:", global_feat.shape)
+            except Exception as e:
+                print("DEBUG: cannot read shape:", e)
 
             # Return consistent format: [cls_score], [global_feat] to match previous training loop expectations.
             return [cls_score], [global_feat]
