@@ -57,7 +57,7 @@ def do_train(cfg,
             with amp.autocast(enabled=True):
                 score, feat = model(img, target, cam_label=target_cam, view_label=target_view )
                 # debug: print shape and type
-                print("DEBUG: global_feat type:", type(feat))
+                print("DEBUG: global_feat type===============:", type(feat))
                 try:
                     print("DEBUG: global_feat.shape:", feat.shape)
                 except Exception as e:
